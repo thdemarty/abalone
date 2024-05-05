@@ -40,16 +40,19 @@ class HumanPlayer(AbstractPlayer):
             inquirer.List("marble1", message=message, choices=marble1_candidate, carousel=True)
         ])['marble1']
 
-
+        marble1 = (game.board.get_xy_from_name(marble1[0], int(marble1[1])))
+                   
         # Ask for marble 2 if the move is sideways
         if move_type == "sideways":
             marble2_candidate = set()
             for move in game.get_legal_moves(game.current_player):
                 if isinstance(move[0][0], tuple):
+                    # print(marble1, move[0][0], move[0][1])
                     if move[0][0] == marble1:
                         marble2_candidate.add(move[0][1])
-                    else:
+                    if move[0][1] == marble1:
                         marble2_candidate.add(move[0][0])
+
             marble2_candidate = list(map(lambda coord: format_marble(coord, game.board), marble2_candidate))
             marble2_candidate.sort()
 
@@ -59,12 +62,10 @@ class HumanPlayer(AbstractPlayer):
 
         # Construct the marbles in the move
         if move_type == "inline":
-            marble1_coord = game.board.get_xy_from_name(marble1[0], int(marble1[1]))
-            marbles = marble1_coord
+            marbles = marble1
         else:
-            marble1_coord = game.board.get_xy_from_name(marble1[0], int(marble1[1]))
             marble2_coord = game.board.get_xy_from_name(marble2[0], int(marble2[1]))
-            marbles = (marble1_coord, marble2_coord)
+            marbles = (marble1, marble2_coord)
             
 
         # Ask for the direction
@@ -74,8 +75,8 @@ class HumanPlayer(AbstractPlayer):
             
 
             if isinstance(move[0][0], tuple):
-                print("This a sideways move")
-                print(marbles, move[0][0], move[0][1])
+                # print("This a sideways move")
+                # print(marbles, move[0][0], move[0][1])
                 if marbles[0] == move[0][0] and marbles[1] == move[0][1]:
                     directions_candidate.add(move[1])
             elif marbles == move[0]:
